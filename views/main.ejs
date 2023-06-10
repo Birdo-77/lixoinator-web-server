@@ -5,11 +5,115 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        .name{
+            text-align: center;
+            width: 20%;
+        }
+    </style>
     <title>Lixoinator Server</title>
 </head>
 <body>
-    <h1 class="title">This is runnig on the raspberry pi</h1>
-    <p>At least I think</p>
-    <h2 class="subtitle">Idk man, just testing</h2>
+    <section class="hero is-info">
+        <div class="hero-body">
+            <div class="container is-flex is-align-content-center">
+                <input class="input is-large is-link Sinput" type="text" placeholder="Digite o código do aluno">
+                <button class="button is-success is-large" onclick="search()">Pesquisar</button>
+            </div>
+        </div>
+    </section>
+    <div class="mainDiv">
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-background"></div>
+      
+        <div class="modal-content">
+            <div class="card">
+                <div class="container">
+                    <div class="container is-flex is-align-content-center">
+                        <input class="input is-large is-danger Dinput" type="text" placeholder="Valor a Descontar">
+                        <button class="button is-danger is-large" onclick="descontar()">Descontar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+        <button class="modal-close is-large" aria-label="close" onclick="closeModal()"></button>
+    </div>
+    <script>
+        const Sinput = document.querySelector(".Sinput");
+        const Dinput = document.querySelector(".Dinput");
+        const mainDiv = document.querySelector(".mainDiv");
+
+        let users = JSON.parse('<%- JSON.stringify(users) %>');
+        let bkUsers = users;
+        let currentUser = "";
+
+        const renderUsers = () => {
+            mainDiv.innerHTML = "";
+            index = 0;
+            for (user of users){
+                mainDiv.innerHTML += `
+                <div class="mt-6 is-flex is-justify-content-space-evenly is-align-content-center">
+                    <div class="name">
+                        <h1>${user.name}</h1>
+                    </div>
+                    <div>
+                        <h1>${user.number}</h1>
+                    </div>
+                    <div>
+                        <p>${user.credit}R$</p>
+                    </div>
+                    <div>
+                        <button class="button is-warning" onclick="showModal(${index})">Descontar valor</button>
+                    </div>
+                </div>
+                `
+                index += 1;
+            }
+        };
+
+        const search = () => {
+            users = [];
+            for (user of bkUsers){
+                console.log(user)
+                if (Sinput.value.startsWith(user.number) || Sinput.value == ""){
+                    users.push(user);
+                }
+            }
+            renderUsers();
+        }
+
+        const showModal = (u) => {
+            currentUser = users[u];
+            console.log(currentUser)
+            document.querySelector("#modal").classList.add("is-active");
+        }
+
+        const closeModal = () => {
+            document.querySelector("#modal").classList.remove("is-active");
+        }
+
+        const descontar = () => {
+            console.log(currentUser)
+            if (Dinput.value.match(/^([0-9]|\.)+$/gm) && Dinput.value <= currentUser.credit){
+                let pass = window.prompt("Digite sua senha");
+                fetch('http://localhost:8080/changeVal', {
+                    method: "POST",
+                    body: JSON.stringify({password: pass, value: Dinput.value, user: currentUser}),
+                    headers: {"Content-type": "application/json;charset=UTF-8"}
+                }).then(res => {
+                    if (res.ok){
+                        location.reload();
+                    }else{
+                        alert("Senha incorreta ou servidor em mal funcionamento");
+                    }
+                })
+            }else{
+                alert("Parece que você digitou algo errado, use apenas números e não use vírgula, use ponto em vez disso. Verifique também se o valor digitado é menor que o crédito total do aluno.");
+            }
+        }
+        renderUsers();
+    </script>
 </body>
 </html>
