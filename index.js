@@ -35,11 +35,11 @@ app.post("/changeVal", (req, res) => {
 app.post("/addVal", (req, res) => {
     if (req.body.password == "lixoinatorUser"){
         const users = JSON.parse(fs.readFileSync("./db.json"));
-        const index = Number(req.body.user.index);
+        const index = Number(req.body.index);
 
-        vl = new Decimal(req.body.value);
+        vl = new Decimal(0.7);
         credit = new Decimal(users.data[index].credit);
-        users.data[index].credit = credit.sum(vl);
+        users.data[index].credit = credit.plus(vl);
 
         fs.writeFileSync("./db.json", JSON.stringify(users));
 

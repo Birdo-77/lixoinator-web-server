@@ -76,7 +76,6 @@
         const search = () => {
             users = [];
             for (user of bkUsers){
-                console.log(user)
                 if (Sinput.value.startsWith(user.number) || Sinput.value == ""){
                     users.push(user);
                 }
@@ -86,7 +85,6 @@
 
         const showModal = (u) => {
             currentUser = users[u];
-            console.log(currentUser)
             document.querySelector("#modal").classList.add("is-active");
         }
 
@@ -95,7 +93,6 @@
         }
 
         const descontar = () => {
-            console.log(currentUser)
             if (Dinput.value.match(/^([0-9]|\.)+$/gm) && Dinput.value <= currentUser.credit){
                 let pass = window.prompt("Digite sua senha");
                 fetch('http://localhost:8080/changeVal', {
