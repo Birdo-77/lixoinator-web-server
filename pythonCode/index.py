@@ -1,4 +1,4 @@
-# Install http requester(?)
+## Install http requester(?)
 # python -m pip install requests
 
 import serial
@@ -6,7 +6,7 @@ import json
 import requests
 
 is_checking_metal = False
-URL = "http://192.168.3.100:8080/"
+URL = "http://192.168.0.104:8080/"
 users = []
 current_user = {}
 
@@ -18,7 +18,6 @@ users = loadUsers()
 
 def checkUser(n):
     for x in users:
-        print(x)
         if (x["number"] == n):
             print("Certo")
             return x
@@ -36,6 +35,19 @@ ser.reset_input_buffer()
 while True:
 	if ser.in_waiting > 0:
 		line = ser.readline().decode('utf-8').rstrip()
-		print(line)
-		current_user = checkUser(int(line))
-		print(current_user)
+		if not is_checking_metal:
+			print(line)
+			current_user = checkUser(line)
+			print(current_user)
+			if current_user:
+				ser.write(b's1\n')
+				is_checking_metal = True
+			else:
+				ser.write(b'wps\n')
+		else:
+			print(line)
+			if line == 's':
+				addVal()
+				current_user = {}
+				line = ''
+				is_checking_metal = False

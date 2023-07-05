@@ -37,7 +37,7 @@ app.post("/addVal", (req, res) => {
         const users = JSON.parse(fs.readFileSync("./db.json"));
         const index = Number(req.body.index);
 
-        vl = new Decimal(0.7);
+        vl = new Decimal(0.05);
         credit = new Decimal(users.data[index].credit);
         users.data[index].credit = credit.plus(vl);
 

@@ -95,7 +95,7 @@
         const descontar = () => {
             if (Dinput.value.match(/^([0-9]|\.)+$/gm) && Dinput.value <= currentUser.credit){
                 let pass = window.prompt("Digite sua senha");
-                fetch('http://192.168.3.100:8080/changeVal', {
+                fetch('http://192.168.0.104:8080/changeVal', {
                     method: "POST",
                     body: JSON.stringify({password: pass, value: Dinput.value, user: currentUser}),
                     headers: {"Content-type": "application/json;charset=UTF-8"}
